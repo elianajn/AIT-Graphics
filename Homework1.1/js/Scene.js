@@ -9,7 +9,8 @@ class Scene {
     // this.quadGeometry = new QuadGeometry(gl);
     // this.starGeometry = new StarGeometry(gl);
     // this.heartGeometry = new HeartGeometry(gl);
-    this.crescentGeometry = new CrescentGeometry(gl);
+    // this.crescentGeometry = new CrescentGeometry(gl);
+    this.donutGeometry = new DonutGeometry(gl);
     this.avatar_position = {x:0, y:0, z:0};
   }
 
@@ -35,7 +36,7 @@ class Scene {
     gl.useProgram(this.solidProgram.glProgram);
     // this.triangleGeometry.draw();
     // this.quadGeometry.draw();
-    this.crescentGeometry.draw();
+    this.donutGeometry.draw();
     // this.heartGeometry.draw();
 
     const objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");

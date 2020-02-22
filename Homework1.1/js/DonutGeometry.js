@@ -1,22 +1,24 @@
 "use strict";
 /* exported TriangleGeometry */
-class CrescentGeometry {
+class DonutGeometry {
   constructor(gl) {
     this.gl = gl;
 
     // allocate and fill vertex buffer in device memory (OpenGL name: array buffer)
     this.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-    this.vertex_array = new Float32Array(3*61);
+    this.vertex_array = new Float32Array(3*147);
     var R = 0.5;
-    var r = 0.6;
+    var r = 0.2;
     var theta = 5 * (Math.PI/180);
-    this.vertex_array = new Float32Array(3*61);
+    this.vertex_array = new Float32Array(3*147);
     this.vertex_array[0] = 0;
     this.vertex_array[1] = 0;
     this.vertex_array[2] = 0.5;
     var counter = 3;
-    for(var i = 0.8916; i < (Math.PI + 0.8916); i += theta)
+    var small_rad = true;
+    var rad = this.r;
+    for(var i = 0; i < (2*Math.PI); i += theta)
     {
       this.vertex_array[counter] = Math.cos(i) * R;
       counter++;
@@ -25,18 +27,18 @@ class CrescentGeometry {
       this.vertex_array[counter] = 0.5;
       counter++;
     }
-    console.log(counter);
-    for (var i = 1.397; i <(Math.PI + 0.1909); i += theta)
+        for(var i = 0; i < (2*Math.PI); i += theta)
     {
-      this.vertex_array[counter] = (Math.cos(i) * r) + 0.2;
+      this.vertex_array[counter] = Math.cos(i) * r;
       counter++;
-      this.vertex_array[counter] = Math.sin(i) * r - 0.2;
+      this.vertex_array[counter] = Math.sin(i) * r;
       counter++;
       this.vertex_array[counter] = 0.5;
       counter++;
     }
     console.log(counter);
     console.log(this.vertex_array);
+
     gl.bufferData(gl.ARRAY_BUFFER,
       this.vertex_array,
       gl.STATIC_DRAW);
@@ -45,11 +47,11 @@ class CrescentGeometry {
     //hw:add new vertexbuffer for color
     this.vertexColor = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexColor);
-    this.color_array = new Float32Array(3*61);
+    this.color_array = new Float32Array(3*147);
     this.color_array[0] = 0.2;
     this.color_array[1] = 0.1;
     this.color_array[2] = 0.3;
-    for (var i = 3; i < (3*61); i++){
+    for (var i = 0; i < (3*147); i++){
       if(i%3 === 0)
         this.color_array[i] = 0.8;
       if(i%3 === 1)
@@ -57,7 +59,6 @@ class CrescentGeometry {
       if(i%3 === 2)
         this.color_array[i] = 0.3;
     }
-    console.log(this.vertexColor);
     gl.bufferData(gl.ARRAY_BUFFER,
         this.color_array,
         gl.STATIC_DRAW);
@@ -65,37 +66,29 @@ class CrescentGeometry {
         // allocate and fill index buffer in device memory (OpenGL name: element array buffer)
         this.indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
-        // this.unit_array = new Uint16Array(62);
-        this.unit_array = new Uint16Array(13);
-        // for (var i = 0; i < 62; i++){
-        //   this.unit_array[i] = i;
-        //   if (i == 61) { this.unit_array[i] = 1; }
-        // }
-        // for(var i = 77; i < 155; i ++)
-        // {
-        //   this.unit_array[i] = i;
-        //   if(i == 77)
-        //     this.unit_array[i] = 0;
-        //   if(i == 154)
-        //     this.unit_array[i] = 77;
-        // }
-
-        this.unit_array[0] = 1;
-        this.unit_array[1] = 2;
-        this.unit_array[2] = 78; //one triangle
-        var counter_outer_circle = 3;
-        var counter_inner_circle = 79;
-        for (var i = 3; i < 13; i ++)
+        this.unit_array = new Uint16Array(146);
+        for (var i = 0; i < 73; i++){
+          this.unit_array[i] = i;
+          if (i == 72) { this.unit_array[i] = 1; }
+        }
+        for(var i = 73; i < 146; i ++)
         {
-          if(i % 2 === 1)
-          {
-            this.unit_array[i] = counter_outer_circle;
-            counter_outer_circle++;
+          this.unit_array[i] = i-1;
+          if (i == 145) { this.unit_array[i] = 74; }
+          if (i == 73) { this.unit_array[i] = 0; }
+        }
+
+        var outer_counter = 1;
+        var inner_counter = 74;
+        for(var i = 0; i < 146; i++)
+        {
+          if(i % 2 === 0){
+            this.unit_array[i] = outer_counter;
+            outer_counter++;
           }
-          else
-          {
-            this.unit_array[i] = counter_inner_circle;
-            counter_inner_circle++;
+          else{
+            this.unit_array[i] = inner_counter;
+            inner_counter++;
           }
         }
         console.log(this.unit_array);
@@ -135,6 +128,6 @@ class CrescentGeometry {
     gl.bindVertexArray(this.inputLayout);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
-    gl.drawElements(gl.TRIANGLE_STRIP, 11, gl.UNSIGNED_SHORT, 0); //gl.TRIANGLES, gl.TRIANGLE_FAN
+    gl.drawElements(gl.TRIANGLE_STRIP, 146, gl.UNSIGNED_SHORT, 0); //gl.TRIANGLES, gl.TRIANGLE_FAN
   }
 }
