@@ -37,7 +37,6 @@ class Scene {
     gl.useProgram(this.solidProgram.glProgram);
     // this.triangleGeometry.draw();
     // this.quadGeometry.draw();
-    // this.donutGeometry.draw(); //move this
     // gl.uniform(vec4, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
     // this.heartGeometry.draw();
 
@@ -45,11 +44,13 @@ class Scene {
     if (objectPositionHandle == null){
       console.log("could not find uniform: gameObject.position");
     } else {
-      gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
+      gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
     }
+    this.donutGeometry.draw();
+    gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
     this.eggGeometry.draw();
-    gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
-    this.eggGeometry.draw();
+    
+    // this.eggGeometry.draw();
     // this.triangleGeometry.draw();
   }
 }

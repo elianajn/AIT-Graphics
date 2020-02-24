@@ -8,7 +8,7 @@ class DonutGeometry {
     this.vertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
     this.vertex_array = new Float32Array(3*147);
-    var R = 0.5;
+    var R = 0.3;
     var r = 0.2;
     var theta = 5 * (Math.PI/180);
     this.vertex_array = new Float32Array(3*147);
