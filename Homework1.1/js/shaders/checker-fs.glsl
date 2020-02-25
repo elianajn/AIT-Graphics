@@ -5,16 +5,20 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
   in vec4 color; // received from VS via RS
   in vec4 worldPosition;
 
-//  uniform struct{
-//  	vec4 colors;
-//  } gameObject;
-	uniform float checker_size;
+
+	uniform struct{
+    float checker_size;
+    float usercolor;
+  } checkGameObject;
+
 
 
   void main(void) {
-	  float cx = floor(15.0 * worldPosition.x);
-  	float cy = floor(15.0 * worldPosition.y); 
-  	float checkers = mod(cx + cy, 2.0);
-	  fragmentColor = vec4(checkers, checkers, checkers, 1);
+	  float cx = floor(checkGameObject.checker_size * worldPosition.x);
+  	float cy = floor(checkGameObject.checker_size * worldPosition.y); 
+    float custom = 0.4;
+    float custom2 = 0.5;
+    float checkers = mod(cx + cy, 2.0);
+	  fragmentColor = vec4(checkGameObject.usercolor, 0.5, checkers, 1);
   }
 `;

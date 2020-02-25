@@ -10,9 +10,9 @@ class EggGeometry {
     this.vertex_array = new Float32Array(3*11);
     var R = 0.5;
     var r = 0.2;
-    var l = 0.0015;
-    var a = 0.25;
-    var b = 0.1;
+    var l = 0.1;
+    var a = 0.2;
+    var b = 0.05;
 
     var alpha = 5 * (Math.PI/180);
     this.vertex_array = new Float32Array(3*72);

@@ -6,9 +6,13 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
   in vec4 worldPosition;
 
 
+	uniform struct{
+    float dt;
+  } heartbeatGameObject;
+
+
+
   void main(void) {
-    fragmentColor = vec4(1, 0.0, 1, 0.7);
-    fragmentColor = color;
-	fragmentColor = vec4(0.5, 0.5, 0.5, 1);
+	  fragmentColor = vec4(0.3, heartbeatGameObject.dt, 0.9, 1);
   }
 `;

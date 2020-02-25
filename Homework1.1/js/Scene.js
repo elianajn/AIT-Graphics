@@ -5,17 +5,19 @@ class Scene {
     this.vsIdle = new Shader(gl, gl.VERTEX_SHADER, "idle-vs.glsl");
     this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "solid-fs.glsl");
     this.fsChecker = new Shader(gl, gl.FRAGMENT_SHADER, "checker-fs.glsl");
+    this.fsClear = new Shader(gl, gl.FRAGMENT_SHADER, "clear-fs.glsl");
+    this.fsHeartbeat = new Shader(gl, gl.FRAGMENT_SHADER, "heartbeat-fs.glsl");
+
     this.solidProgram = new Program(gl, this.vsIdle, this.fsSolid);
     this.checkerProgram = new Program(gl, this.vsIdle, this.fsChecker);
-    // this.triangleGeometry = new TriangleGeometry(gl);
-    // this.quadGeometry = new QuadGeometry(gl);
-    // this.starGeometry = new StarGeometry(gl);
-    // this.heartGeometry = new HeartGeometry(gl);
-    // this.crescentGeometry = new CrescentGeometry(gl);
+    this.clearProgram = new Program(gl, this.vsIdle, this.fsClear);
+    this.heartbeatProgram = new Program(gl, this.vsIdle, this.fsHeartbeat);
+
     this.donutGeometry = new DonutGeometry(gl);
     this.eggGeometry = new EggGeometry(gl);
     this.avatar_position = {x:0, y:0, z:0};
     this.eggUniform = {x:-0.7, y:0.5, z:0};
+    this.mode = "HEARTBEAT";
 
   }
 
@@ -32,17 +34,22 @@ class Scene {
     gl.clearDepth(1.0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-    // if(keysPressed.RIGHT){this.avatar_position.x += 0.01;}
-    // if(keysPressed.LEFT){this.avatar_position.x -= 0.01;}
-    // if(keysPressed.UP){this.avatar_position.y += 0.01;}
-    // if(keysPressed.DOWN){this.avatar_position.y -= 0.01;}
+    if(keysPressed.C){this.mode = "CHECKERED";}
+    if(keysPressed.S){this.mode = "SOLID";}
+    if(keysPressed.E){this.mode = "EGGS";}
+    if(keysPressed.X){this.mode = "HEARTBEAT";}
+    if(keysPressed.RIGHT){this.avatar_position.x += 0.01;}
+    if(keysPressed.LEFT){this.avatar_position.x -= 0.01;}
+    if(keysPressed.UP){this.avatar_position.y += 0.01;}
+    if(keysPressed.DOWN){this.avatar_position.y -= 0.01;}
+    if(this.avatar_position.x <= -0.7) { 
+      this.avatar_position.x = -(this.avatar_position.x);
+      console.log(this.avatar_position.x % 1.0);
+    }
+
+
 
     gl.useProgram(this.solidProgram.glProgram);
-    // this.triangleGeometry.draw();
-    // this.quadGeometry.draw();
-    // gl.uniform(vec4, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
-    // this.heartGeometry.draw();
-
     var objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
     if (objectPositionHandle == null){
       console.log("could not find uniform: gameObject.position");
@@ -50,14 +57,73 @@ class Scene {
       gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
     }
 
-    this.donutGeometry.draw();
     gl.useProgram(this.checkerProgram.glProgram);
+    var objectColorHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.usercolor");
+    var objectSizeHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.checker_size");
+    // if (objectColorHandle == null){
+    //   console.log("could not find uniform: checkGameObject.usercolor");
+    // } else 
+    {
+      // gl.uniform4f(objectColorHandle, 10.0, 1.0, 0.0, 0.0, 0.0);
+      gl.uniform1f(objectColorHandle, 1.0);
+      gl.uniform1f(objectSizeHandle, 15.0);
+    }
+
+
+
+
+
+
+
+
+
+    // this.donutGeometry.draw();
     objectPositionHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "gameObject.position");
     gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
 
-    this.eggGeometry.draw();
+    // this.eggGeometry.draw();
     
     // this.eggGeometry.draw();
     // this.triangleGeometry.draw();
+
+    switch(this.mode)
+    {
+      case "SOLID":
+        gl.useProgram(this.solidProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
+        this.eggGeometry.draw();
+        break;
+      case "CHECKERED":
+        gl.useProgram(this.checkerProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "gameObject.position");
+        this.donutGeometry.draw();
+        break;
+      case "EGGS":
+        gl.useProgram(this.clearProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.clearProgram.glProgram, "gameObject.position");
+        gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
+        this.eggGeometry.draw();
+        gl.useProgram(this.checkerProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "gameObject.position");
+        gl.uniform3f(objectPositionHandle, 0.5, -0.5, 0.0);
+        this.eggGeometry.draw();
+        gl.uniform3f(objectPositionHandle, -0.5, 0.5, 0.0);
+        var objectColorHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.usercolor");
+        gl.uniform1f(objectColorHandle, 0.1);
+        var objectSizeHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.checker_size");
+        gl.uniform1f(objectSizeHandle, 25.0);
+        this.eggGeometry.draw();
+        break;
+      case "HEARTBEAT":
+        var date = new Date();
+        var timestamp = date.getTime();
+        gl.useProgram(this.heartbeatProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.heartbeatProgram.glProgram, "gameObject.position");
+        gl.uniform3f(objectPositionHandle, this.avatar_position.x, this.avatar_position.y, this.avatar_position.z);
+        var heartbeatTimeHandle = gl.getUniformLocation(this.heartbeatProgram.glProgram, "heartbeatGameObject.dt");
+        gl.uniform1f(heartbeatTimeHandle, Math.sin(timestamp/500));
+        this.donutGeometry.draw();
+        break;
+    }
   }
 }
