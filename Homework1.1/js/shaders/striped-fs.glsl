@@ -8,11 +8,13 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
 //  uniform struct{
 //  	vec4 colors;
 //  } gameObject;
+	uniform float checker_size;
 
 
   void main(void) {
-    fragmentColor = vec4(1, 0.0, 1, 0.7);
-    fragmentColor = color;
-	fragmentColor = vec4(fract(worldPosition.x * 10.0), .5, 0.5, 1);
+	  float cx = floor(15.0 * worldPosition.x);
+  	float cy = floor(15.0 * worldPosition.y); 
+  	float checkers = mod(cx + cy, 2.0);
+	  fragmentColor = vec4(checkers, checkers, checkers, 1);
   }
 `;

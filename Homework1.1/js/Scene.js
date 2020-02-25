@@ -4,7 +4,9 @@ class Scene {
   constructor(gl) {
     this.vsIdle = new Shader(gl, gl.VERTEX_SHADER, "idle-vs.glsl");
     this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "solid-fs.glsl");
+    this.fsStriped = new Shader(gl, gl.FRAGMENT_SHADER, "striped-fs.glsl");
     this.solidProgram = new Program(gl, this.vsIdle, this.fsSolid);
+    this.stripedProgram = new Program(gl, this.vsIdle, this.fsStriped);
     // this.triangleGeometry = new TriangleGeometry(gl);
     // this.quadGeometry = new QuadGeometry(gl);
     // this.starGeometry = new StarGeometry(gl);
@@ -14,6 +16,7 @@ class Scene {
     this.eggGeometry = new EggGeometry(gl);
     this.avatar_position = {x:0, y:0, z:0};
     this.eggUniform = {x:-0.7, y:0.5, z:0};
+
   }
 
   resize(gl, canvas) {
@@ -40,14 +43,18 @@ class Scene {
     // gl.uniform(vec4, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
     // this.heartGeometry.draw();
 
-    const objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
+    var objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
     if (objectPositionHandle == null){
       console.log("could not find uniform: gameObject.position");
     } else {
       gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
     }
+
     this.donutGeometry.draw();
+    gl.useProgram(this.stripedProgram.glProgram);
+    objectPositionHandle = gl.getUniformLocation(this.stripedProgram.glProgram, "gameObject.position");
     gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
+
     this.eggGeometry.draw();
     
     // this.eggGeometry.draw();
