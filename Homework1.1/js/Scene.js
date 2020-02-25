@@ -4,9 +4,9 @@ class Scene {
   constructor(gl) {
     this.vsIdle = new Shader(gl, gl.VERTEX_SHADER, "idle-vs.glsl");
     this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "solid-fs.glsl");
-    this.fsStriped = new Shader(gl, gl.FRAGMENT_SHADER, "striped-fs.glsl");
+    this.fsChecker = new Shader(gl, gl.FRAGMENT_SHADER, "checker-fs.glsl");
     this.solidProgram = new Program(gl, this.vsIdle, this.fsSolid);
-    this.stripedProgram = new Program(gl, this.vsIdle, this.fsStriped);
+    this.checkerProgram = new Program(gl, this.vsIdle, this.fsChecker);
     // this.triangleGeometry = new TriangleGeometry(gl);
     // this.quadGeometry = new QuadGeometry(gl);
     // this.starGeometry = new StarGeometry(gl);
@@ -51,8 +51,8 @@ class Scene {
     }
 
     this.donutGeometry.draw();
-    gl.useProgram(this.stripedProgram.glProgram);
-    objectPositionHandle = gl.getUniformLocation(this.stripedProgram.glProgram, "gameObject.position");
+    gl.useProgram(this.checkerProgram.glProgram);
+    objectPositionHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "gameObject.position");
     gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
 
     this.eggGeometry.draw();
