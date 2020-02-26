@@ -3,6 +3,7 @@
 class Scene {
   constructor(gl) {
     this.vsIdle = new Shader(gl, gl.VERTEX_SHADER, "idle-vs.glsl");
+    this.vsRandom = new Shader(gl, gl.VERTEX_SHADER, "random-vs.glsl");
     this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "solid-fs.glsl");
     this.fsChecker = new Shader(gl, gl.FRAGMENT_SHADER, "checker-fs.glsl");
     this.fsClear = new Shader(gl, gl.FRAGMENT_SHADER, "clear-fs.glsl");
@@ -11,10 +12,12 @@ class Scene {
     this.solidProgram = new Program(gl, this.vsIdle, this.fsSolid);
     this.checkerProgram = new Program(gl, this.vsIdle, this.fsChecker);
     this.clearProgram = new Program(gl, this.vsIdle, this.fsClear);
+    this.jumpProgram = new Program(gl, this.vsRandom, this.fsClear);
     this.heartbeatProgram = new Program(gl, this.vsIdle, this.fsHeartbeat);
 
     this.donutGeometry = new DonutGeometry(gl);
     this.eggGeometry = new EggGeometry(gl);
+    this.starGeometry = new StarGeometry(gl);
     this.avatar_position = {x:0, y:0, z:0};
     this.eggUniform = {x:-0.7, y:0.5, z:0};
     this.mode = "HEARTBEAT";
@@ -38,14 +41,15 @@ class Scene {
     if(keysPressed.S){this.mode = "SOLID";}
     if(keysPressed.E){this.mode = "EGGS";}
     if(keysPressed.X){this.mode = "HEARTBEAT";}
+    if(keysPressed.J){this.mode = "JUMP";}
     if(keysPressed.RIGHT){this.avatar_position.x += 0.01;}
     if(keysPressed.LEFT){this.avatar_position.x -= 0.01;}
     if(keysPressed.UP){this.avatar_position.y += 0.01;}
     if(keysPressed.DOWN){this.avatar_position.y -= 0.01;}
-    if(this.avatar_position.x <= -0.7) { 
-      this.avatar_position.x = -(this.avatar_position.x);
-      console.log(this.avatar_position.x % 1.0);
-    }
+    if(this.avatar_position.x <= -1.3) { this.avatar_position.x = 1.3;}
+    else if(this.avatar_position.x >= 1.3) { this.avatar_position.x = -1.3;}
+    if(this.avatar_position.y <= -1.3) { this.avatar_position.y = 1.3;}
+    else if(this.avatar_position.y >= 1.3) { this.avatar_position.y = -1.3;}
 
 
 
@@ -123,6 +127,20 @@ class Scene {
         var heartbeatTimeHandle = gl.getUniformLocation(this.heartbeatProgram.glProgram, "heartbeatGameObject.dt");
         gl.uniform1f(heartbeatTimeHandle, Math.sin(timestamp/500));
         this.donutGeometry.draw();
+        break;
+      case "JUMP":
+        gl.useProgram(this.jumpProgram.glProgram);
+        var randomPositionHandle = gl.getUniformLocation(this.jumpProgram.glProgram, "randomGameObject.position");
+        gl.uniform3f(randomPositionHandle, 0.0, 0.0, 0.0);
+        this.eggGeometry.draw();
+        var that = this;
+        // this.set = setInterval(function(){ 
+        //   gl.uniform3f(randomPositionHandle, Math.random()*2-1, Math.random()*2-1, Math.random());
+        //   that.eggGeometry.draw();
+        //   console.log("moving");
+        // }, 2000);
+        gl.uniform3f(randomPositionHandle, Math.random()*2-1, Math.random()*2-1, Math.random());
+        this.eggGeometry.draw();
         break;
     }
   }

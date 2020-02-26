@@ -65,7 +65,6 @@ class EggGeometry {
           this.unit_array[i] = i;
           if (i == 72) { this.unit_array[i] = 1; }
         }
-        console.log(this.unit_array);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
           this.unit_array,
           gl.STATIC_DRAW);

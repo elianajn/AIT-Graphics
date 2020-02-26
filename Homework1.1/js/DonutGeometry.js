@@ -36,9 +36,6 @@ class DonutGeometry {
       this.vertex_array[counter] = 0.5;
       counter++;
     }
-    console.log(counter);
-    console.log(this.vertex_array);
-
     gl.bufferData(gl.ARRAY_BUFFER,
       this.vertex_array,
       gl.STATIC_DRAW);
@@ -91,7 +88,6 @@ class DonutGeometry {
             inner_counter++;
           }
         }
-        console.log(this.unit_array);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
           this.unit_array,
           gl.STATIC_DRAW);
