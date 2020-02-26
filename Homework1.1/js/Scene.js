@@ -4,6 +4,7 @@ class Scene {
   constructor(gl) {
     this.vsIdle = new Shader(gl, gl.VERTEX_SHADER, "idle-vs.glsl");
     this.vsRandom = new Shader(gl, gl.VERTEX_SHADER, "random-vs.glsl");
+    this.vsPinch = new Shader(gl, gl.VERTEX_SHADER, "pinch-vs.glsl");
     this.fsSolid = new Shader(gl, gl.FRAGMENT_SHADER, "solid-fs.glsl");
     this.fsChecker = new Shader(gl, gl.FRAGMENT_SHADER, "checker-fs.glsl");
     this.fsClear = new Shader(gl, gl.FRAGMENT_SHADER, "clear-fs.glsl");
@@ -14,6 +15,7 @@ class Scene {
     this.clearProgram = new Program(gl, this.vsIdle, this.fsClear);
     this.jumpProgram = new Program(gl, this.vsRandom, this.fsClear);
     this.heartbeatProgram = new Program(gl, this.vsIdle, this.fsHeartbeat);
+    this.pinchProgram = new Program(gl, this.vsPinch, this.fsClear);
 
     this.donutGeometry = new DonutGeometry(gl);
     this.eggGeometry = new EggGeometry(gl);
@@ -21,6 +23,8 @@ class Scene {
     this.avatar_position = {x:0, y:0, z:0};
     this.eggUniform = {x:-0.7, y:0.5, z:0};
     this.mode = "HEARTBEAT";
+
+    this.timeAtFirstFrame = new Date().getTime();
 
   }
 
@@ -38,7 +42,7 @@ class Scene {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     if(keysPressed.C){this.mode = "CHECKERED";}
-    if(keysPressed.S){this.mode = "SOLID";}
+    if(keysPressed.S){this.mode = "STAR";}
     if(keysPressed.E){this.mode = "EGGS";}
     if(keysPressed.X){this.mode = "HEARTBEAT";}
     if(keysPressed.J){this.mode = "JUMP";}
@@ -92,9 +96,14 @@ class Scene {
 
     switch(this.mode)
     {
-      case "SOLID":
-        gl.useProgram(this.clearProgram.glProgram);
-        objectPositionHandle = gl.getUniformLocation(this.clearProgram.glProgram, "gameObject.position");
+      case "STAR":
+        gl.useProgram(this.pinchProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.pinchProgram.glProgram, "pinchGameObject.time");
+        var date = new Date();
+        const timeNow = date.getTime();
+        var time = (timeNow - this.timeAtFirstFrame)/1000.0;
+        
+        gl.uniform1f(objectPositionHandle, Math.sin(time));
         this.starGeometry.draw();
         break;
       case "CHECKERED":

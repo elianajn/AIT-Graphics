@@ -5,12 +5,12 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
   out vec4 worldPosition;
 
   uniform struct{
-  	vec3 position;
-  } randomGameObject;
+    float time;
+  } pinchGameObject;
 
   void main(void) {
     gl_Position = vertexPosition;
-    gl_Position.xyz += randomGameObject.position;
+    gl_Position.xyz *= pow(sin(length(vertexPosition)/8.0), abs(pinchGameObject.time));
     worldPosition = vertexPosition;
     color = vertexColor;
 
