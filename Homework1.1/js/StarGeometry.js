@@ -40,8 +40,12 @@ class StarGeometry {
     this.vertexColor = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexColor);
     this.color_array = new Float32Array(3*11);
-    for (var i = 0; i < (3*11); i++){
-      this.color_array[i] = Math.random();
+    this.color_array[0] = 1.0;//0.255;
+    this.color_array[1] = 0.02;
+    this.color_array[2] = 0.0;
+    for (var i = 3; i < (3*11); i++){
+      if(i % 3 == 0)
+        this.color_array[i] = 0.4;
     }
     gl.bufferData(gl.ARRAY_BUFFER,
         this.color_array,
@@ -55,7 +59,6 @@ class StarGeometry {
           this.unit_array[i] = i;
           if (i == 11) { this.unit_array[i] = 1; }
         }
-        console.log(this.unit_array);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
           this.unit_array,
           gl.STATIC_DRAW);

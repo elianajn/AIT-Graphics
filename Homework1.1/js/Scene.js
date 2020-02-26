@@ -93,9 +93,9 @@ class Scene {
     switch(this.mode)
     {
       case "SOLID":
-        gl.useProgram(this.solidProgram.glProgram);
-        objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
-        this.eggGeometry.draw();
+        gl.useProgram(this.clearProgram.glProgram);
+        objectPositionHandle = gl.getUniformLocation(this.clearProgram.glProgram, "gameObject.position");
+        this.starGeometry.draw();
         break;
       case "CHECKERED":
         gl.useProgram(this.checkerProgram.glProgram);

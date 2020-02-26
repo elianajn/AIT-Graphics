@@ -44,7 +44,6 @@ class App{
       //jshint unused:false
       this.textLeft = event.x;
       this.textBottom = event.y;
-      console.log("ok");
     };
     this.canvas.onmousemove = (event) => {
       //jshint unused:false
