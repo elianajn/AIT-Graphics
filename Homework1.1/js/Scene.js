@@ -44,7 +44,7 @@ class Scene {
     if(keysPressed.C){this.mode = "CHECKERED";}
     if(keysPressed.S){this.mode = "STAR";}
     if(keysPressed.E){this.mode = "EGGS";}
-    if(keysPressed.X){this.mode = "HEARTBEAT";}
+    if(keysPressed.D){this.mode = "HEARTBEAT";}
     if(keysPressed.J){this.mode = "JUMP";}
     if(keysPressed.RIGHT){this.avatar_position.x += 0.01;}
     if(keysPressed.LEFT){this.avatar_position.x -= 0.01;}
@@ -54,9 +54,6 @@ class Scene {
     else if(this.avatar_position.x >= 1.3) { this.avatar_position.x = -1.3;}
     if(this.avatar_position.y <= -1.3) { this.avatar_position.y = 1.3;}
     else if(this.avatar_position.y >= 1.3) { this.avatar_position.y = -1.3;}
-
-
-
     gl.useProgram(this.solidProgram.glProgram);
     var objectPositionHandle = gl.getUniformLocation(this.solidProgram.glProgram, "gameObject.position");
     if (objectPositionHandle == null){
@@ -64,36 +61,13 @@ class Scene {
     } else {
       gl.uniform3f(objectPositionHandle, 0.0, 0.0, 0.0);
     }
-
     gl.useProgram(this.checkerProgram.glProgram);
     var objectColorHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.usercolor");
     var objectSizeHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "checkGameObject.checker_size");
-    // if (objectColorHandle == null){
-    //   console.log("could not find uniform: checkGameObject.usercolor");
-    // } else 
-    {
-      // gl.uniform4f(objectColorHandle, 10.0, 1.0, 0.0, 0.0, 0.0);
-      gl.uniform1f(objectColorHandle, 1.0);
-      gl.uniform1f(objectSizeHandle, 15.0);
-    }
-
-
-
-
-
-
-
-
-
-    // this.donutGeometry.draw();
+    gl.uniform1f(objectColorHandle, 1.0);
+    gl.uniform1f(objectSizeHandle, 15.0);
     objectPositionHandle = gl.getUniformLocation(this.checkerProgram.glProgram, "gameObject.position");
     gl.uniform3f(objectPositionHandle, this.eggUniform.x, this.eggUniform.y, this.eggUniform.z);
-
-    // this.eggGeometry.draw();
-    
-    // this.eggGeometry.draw();
-    // this.triangleGeometry.draw();
-
     switch(this.mode)
     {
       case "STAR":
@@ -143,11 +117,11 @@ class Scene {
         gl.uniform3f(randomPositionHandle, 0.0, 0.0, 0.0);
         this.eggGeometry.draw();
         var that = this;
-        // this.set = setInterval(function(){ 
-        //   gl.uniform3f(randomPositionHandle, Math.random()*2-1, Math.random()*2-1, Math.random());
-        //   that.eggGeometry.draw();
-        //   console.log("moving");
-        // }, 2000);
+        this.set = setInterval(function(){ 
+          gl.uniform3f(randomPositionHandle, Math.random()*2-1, Math.random()*2-1, Math.random());
+          that.eggGeometry.draw();
+          console.log("moving");
+        }, 2000);
         gl.uniform3f(randomPositionHandle, Math.random()*2-1, Math.random()*2-1, Math.random());
         this.eggGeometry.draw();
         break;
