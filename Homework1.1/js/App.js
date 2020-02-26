@@ -63,7 +63,7 @@ class App{
   update() {
     // this.overlay.innerHTML = `<div style="position:absolute;left:${this.textLeft}px;bottom:-${this.textBottom}px"> Hello AIT! </div>`;
     // this.overlay.innerHTML = `<div style="position:absolute;left:${this.textLeft}px;bottom:-${this.textBottom}px"> ${JSON.stringify(this.keysPressed)} </div>`;
-    this.overlay.innerHTML = `<div style="position:absolute;left:${this.textLeft}px;bottom:-${this.textBottom}px"> Use arrow keys to move donut </div>`;
+    // this.overlay.innerHTML = `<div style="position:absolute;left:${this.textLeft}px;bottom:-${this.textBottom}px"> Use arrow keys to move donut </div>`;
     const pendingResourceNames = Object.keys(this.gl.pendingResources);
     if (pendingResourceNames.length === 0) {
       this.scene.update(this.gl, this.keysPressed);
