@@ -7,6 +7,6 @@ Complete list of completed tasks:
 * Part 5: pinch
 * Part 6: arrow move
 
-Press 'E' to see the checkered eggs 
-Press 'S' to see the pinching star 
+Press 'E' to see the checkered eggs  
+Press 'S' to see the pinching star  
 Press 'D' to see the heartbeat donut. The heartbeat donut can be moved with the arrow keys, and wraps around the screen. 
