@@ -1,4 +1,4 @@
-#Homework 1.1
+# Homework 1.1
 Complete list of completed tasks:
 	* Part 1: donut
 	* Part 2: egg
