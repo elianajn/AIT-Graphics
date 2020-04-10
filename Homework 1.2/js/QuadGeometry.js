@@ -12,7 +12,7 @@ class QuadGeometry {
         -1, -1, 0.5,
         -1,  1, 0.5,
          1,  -1, 0.5,
-         1,  1, 0.5,         
+         1,  1, 0.5,
       ]),
       gl.STATIC_DRAW);
 
@@ -20,12 +20,12 @@ class QuadGeometry {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexColorBuffer);
     gl.bufferData(gl.ARRAY_BUFFER,
       new Float32Array([
-         0,  0, 1,
-         0,  0, 1,
-         0,  0, 1,
-         0,  0, 1,         
+         1,  0, 0.5,
+         0.5,  0, 1,
+         0.5,  0, 1,
+         1,  0, 0.5,
       ]),
-      gl.STATIC_DRAW); 
+      gl.STATIC_DRAW);
 
     // allocate and fill index buffer in device memory (OpenGL name: element array buffer)
     this.indexBuffer = gl.createBuffer();
@@ -56,7 +56,7 @@ class QuadGeometry {
       false, //< do not normalize (make unit length)
       0, //< tightly packed
       0 //< data starts at array start
-    ); 
+    );
 
     gl.bindVertexArray(null);
   }
@@ -65,7 +65,7 @@ class QuadGeometry {
     const gl = this.gl;
 
     gl.bindVertexArray(this.inputLayout);
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);  
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.indexBuffer);
 
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0);
   }

@@ -12,6 +12,7 @@ class App{
     }
 
     this.keysPressed = {};
+    this.mouseClick = [false,0,0];
 
     // serves as a registry for textures or models being loaded
     this.gl.pendingResources = {};
@@ -26,7 +27,7 @@ class App{
     this.canvas.width = this.canvas.clientWidth;
     this.canvas.height = this.canvas.clientHeight;
     this.scene.resize(this.gl, this.canvas);
-   
+
   }
 
   registerEventHandlers() {
@@ -36,19 +37,25 @@ class App{
     };
     document.onkeyup = (event) => {
       //jshint unused:false
-      this.keysPressed[keyNames[event.keyCode]] = false;    
+      this.keysPressed[keyNames[event.keyCode]] = false;
     };
     this.canvas.onmousedown = (event) => {
       //jshint unused:false
+      let half_width = this.canvas.width/2;
+      let half_height = this.canvas.height/2;
+      this.y = (half_height - event.y)/(half_height);
+      this.x = (event.x - half_width)/(half_width);
+      this.mouseClick = [true,this.x, this.y];
     };
     this.canvas.onmousemove = (event) => {
       //jshint unused:false
-      event.stopPropagation();
+      // event.stopPropagation();
     };
     this.canvas.onmouseout = (event) => {
       //jshint unused:false
     };
     this.canvas.onmouseup = (event) => {
+      this.mouseClick[0] = false;
       //jshint unused:false
     };
     window.addEventListener('resize', () => this.resize() );
@@ -61,7 +68,8 @@ class App{
     const pendingResourceNames = Object.keys(this.gl.pendingResources);
     if (pendingResourceNames.length === 0) {
       // animate and draw scene
-      this.scene.update(this.gl, this.keysPressed);
+      this.scene.update(this.gl, this.keysPressed, this.mouseClick);
+
       this.overlay.innerHTML = "Ready.";
     } else {
       this.overlay.innerHTML = `<font color="red">Loading: ${pendingResourceNames}</font>`;
