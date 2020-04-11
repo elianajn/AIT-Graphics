@@ -35,6 +35,9 @@ class Scene extends UniformProvider {
     this.asteroidMesh = new Mesh(this.asteroidMaterial, this.texturedQuadGeometry);
     const genericMove = function(t, dt){
       const acceleration = new Vec3(this.force).mul(this.invMass);
+      const momentum = 0.0;
+      const initial_velocity = momentum * this.invMass;
+      this.velocity.addScaled(dt, initial_velocity);
       this.velocity.addScaled(dt, acceleration);
       this.position.addScaled(dt, this.velocity);
     };
@@ -51,14 +54,20 @@ class Scene extends UniformProvider {
     this.avatar.backDrag = 0.9;
     this.avatar.sideDrag = 0.5;
     this.avatar.angularDrag = 0.5;
+    // this.avatar.aheadVector = new Vec3();
+    this.avatar.thrust = 0;
     this.avatar.control = function(t, dt, keysPressed, colliders){
-      // PRACTICAL TODO
+      this.thrust = 0;
+      if(keysPressed.LEFT){this.torque += 0.1;}
+      if(keysPressed.RIGHT){this.torque -= 0.1;}
+      if(keysPressed.UP){this.thrust += 1;};
+      if(keysPressed.DOWN){this.thrust -= 1;}
     };
-    // this.avatar.move = genericMove;
-    this.avatar.force = new Vec3(1,0,0);
+    console.log(this.avatar.force);
     this.avatar.invMass = 0.5;
-    this.avatar.torque = 1.0;
     this.avatar.move = function(t, dt) {
+      this.aheadVector = new Vec3(Math.cos(this.orientation), Math.sin(this.orientation),0);
+      this.force = new Vec3(this.aheadVector).mul(this.thrust); // avatar does not move if the up or down key is not being held
       const acceleration = new Vec3(this.force).mul(this.invMass);
       const momentum = 0.0;
       const initial_velocity = momentum * this.invMass;
