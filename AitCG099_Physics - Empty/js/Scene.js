@@ -57,23 +57,18 @@ class Scene extends UniformProvider {
     // this.avatar.move = genericMove;
     this.avatar.force = new Vec3(1,0,0);
     this.avatar.invMass = 0.5;
+    this.avatar.torque = 1.0;
     this.avatar.move = function(t, dt) {
-      // this.force = new Vec3(1,0,0);
-      // this.position.y -= dt;
-      console.log(this.force);
       const acceleration = new Vec3(this.force).mul(this.invMass);
-      const momentum = 10.0;
+      const momentum = 0.0;
       const initial_velocity = momentum * this.invMass;
       this.velocity.addScaled(dt, initial_velocity);
       this.velocity.addScaled(dt, acceleration);
       this.position.addScaled(dt, this.velocity);
-      // this.position.x += dt;
-      // this.force = new Vec3(1, 1, 1);
-      // console.log(this.force);
-      // const acceleration = new Vec3(this.force).mul(this.invMass);
-      // this.velocity.addScaled(dt, acceleration);
-      // this.position.addScaled(dt, this.velocity);
-      // this.momentum
+
+      const angularAcceleration = this.torque * this.invAngularMass;
+      this.angularVelocity += angularAcceleration * dt;
+      this.orientation += this.angularVelocity * dt;
     };
 
     this.timeAtFirstFrame = new Date().getTime();
