@@ -5,15 +5,15 @@ class Scene extends UniformProvider {
     super("scene");
     this.programs = [];
 
-    this.vsTextured = new Shader(gl, gl.VERTEX_SHADER, "textured-vs.glsl");    
+    this.vsTextured = new Shader(gl, gl.VERTEX_SHADER, "textured-vs.glsl");
     this.fsTextured = new Shader(gl, gl.FRAGMENT_SHADER, "textured-fs.glsl");
-    this.programs.push( 
+    this.programs.push(
         this.texturedProgram = new TexturedProgram(gl, this.vsTextured, this.fsTextured));
     this.vsBackground = new Shader(gl, gl.VERTEX_SHADER, "background-vs.glsl");
-    this.programs.push( 
+    this.programs.push(
         this.backgroundProgram = new TexturedProgram(gl, this.vsBackground, this.fsTextured));
 
-    this.texturedQuadGeometry = new TexturedQuadGeometry(gl);    
+    this.texturedQuadGeometry = new TexturedQuadGeometry(gl);
 
     this.gameObjects = [];
     this.backgroundMaterial = new Material(this.backgroundProgram);
@@ -34,7 +34,9 @@ class Scene extends UniformProvider {
     this.asteroidMaterial.colorTexture.set(new Texture2D(gl, "media/asteroid.png"));
     this.asteroidMesh = new Mesh(this.asteroidMaterial, this.texturedQuadGeometry);
     const genericMove = function(t, dt){
-      // PRACTICAL TODO
+      const acceleration = new Vec3(this.force).mul(this.invMass);
+      this.velocity.addScaled(dt, acceleration);
+      this.position.addScaled(dt, this.velocity);
     };
 
     for(let i=0; i < 64; i++){
@@ -51,13 +53,33 @@ class Scene extends UniformProvider {
     this.avatar.angularDrag = 0.5;
     this.avatar.control = function(t, dt, keysPressed, colliders){
       // PRACTICAL TODO
-    };  
-    this.avatar.move = genericMove;
+    };
+    // this.avatar.move = genericMove;
+    this.avatar.force = new Vec3(1,0,0);
+    this.avatar.invMass = 0.5;
+    this.avatar.move = function(t, dt) {
+      // this.force = new Vec3(1,0,0);
+      // this.position.y -= dt;
+      console.log(this.force);
+      const acceleration = new Vec3(this.force).mul(this.invMass);
+      const momentum = 10.0;
+      const initial_velocity = momentum * this.invMass;
+      this.velocity.addScaled(dt, initial_velocity);
+      this.velocity.addScaled(dt, acceleration);
+      this.position.addScaled(dt, this.velocity);
+      // this.position.x += dt;
+      // this.force = new Vec3(1, 1, 1);
+      // console.log(this.force);
+      // const acceleration = new Vec3(this.force).mul(this.invMass);
+      // this.velocity.addScaled(dt, acceleration);
+      // this.position.addScaled(dt, this.velocity);
+      // this.momentum
+    };
 
     this.timeAtFirstFrame = new Date().getTime();
     this.timeAtLastFrame = this.timeAtFirstFrame;
 
-    this.camera = new OrthoCamera(...this.programs); 
+    this.camera = new OrthoCamera(...this.programs);
     this.addComponentsAndGatherUniforms(...this.programs);
 
     gl.enable(gl.BLEND);
@@ -76,7 +98,7 @@ class Scene extends UniformProvider {
     //jshint unused:false
     const timeAtThisFrame = new Date().getTime();
     const dt = (timeAtThisFrame - this.timeAtLastFrame) / 1000.0;
-    const t = (timeAtThisFrame - this.timeAtFirstFrame) / 1000.0; 
+    const t = (timeAtThisFrame - this.timeAtFirstFrame) / 1000.0;
     this.timeAtLastFrame = timeAtThisFrame;
 
     this.camera.position = this.avatar.position;
