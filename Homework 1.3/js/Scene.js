@@ -92,10 +92,37 @@ class Scene extends UniformProvider {
     var flames = this.flames;
     var flamesRight = this.flamesRight;
     var flamesLeft = this.flamesLeft;
+    // this.avatar.control = function(t, dt, keysPressed, colliders){
+    //   this.thrust = 0;
+    //   this.torque = 0;
+    //   remove(gameObjects, flames);
+    //   remove(gameObjects, flamesRight);
+    //   remove(gameObjects, flamesLeft);
+    //   if(keysPressed.LEFT){
+    //     this.torque += 1;
+    //     gameObjects.push(flamesRight);
+    //   }
+    //   if(keysPressed.RIGHT){
+    //     this.torque -= 1;
+    //     gameObjects.push(flamesLeft);
+    //   }
+    //   if(keysPressed.UP){
+    //     this.thrust += 1;
+    //     gameObjects.push(flames);
+    //   }
+    //   if(keysPressed.DOWN){
+    //     this.thrust -= 1;
+    //     gameObjects.push(flamesRight);
+    //     gameObjects.push(flamesLeft);
+    //   }
+    // };
+    this.avatar.invMass = 100.0;
+    this.flames.parent = this.avatar;
+    this.flamesRight.parent = this.avatar;
+    this.flamesLeft.parent = this.avatar;
     this.avatar.control = function(t, dt, keysPressed, colliders){
       this.thrust = 0;
       this.torque = 0;
-      // gameObjects.splice()
       remove(gameObjects, flames);
       remove(gameObjects, flamesRight);
       remove(gameObjects, flamesLeft);
@@ -117,43 +144,20 @@ class Scene extends UniformProvider {
         gameObjects.push(flamesLeft);
       }
     };
-    // this.theta = this.avatar.orientation;
-    // const avatarMove = function(t,dt){
-    //   this.aheadVector = new Vec3(Math.cos(theta), Math.sin(theta),0);
-    //   this.force = (this.aheadVector).mul(this.thrust); // avatar does not move if the up or down key is not being held
-    //   const acceleration = new Vec3(this.force).mul(this.invMass);
-    //   const momentum = 0.0;
-    //   const initial_velocity = momentum * this.invMass;
-    //   this.velocity.addScaled(dt, initial_velocity);
-    //   this.velocity.addScaled(dt, acceleration);
-    //   this.position.addScaled(dt, this.velocity);
-      // this.velocity.mul(Math.exp(-dt * c * this.invMass));
-
-    //   const angularAcceleration = this.torque * this.invAngularMass;
-    //   this.angularVelocity += angularAcceleration * dt;
-    //   this.orientation += this.angularVelocity * dt;
-    // };
-    // console.log(this.avatar.force);
-    this.avatar.invMass = 0.5;
-    // this.flames.invMass = 0.5;
-    // this.avatar.move = avatarMove;
-    this.flames.parent = this.avatar;
-    this.flamesRight.parent = this.avatar;
-    this.flamesLeft.parent = this.avatar;
-    // this.flames.move = avatarMove;
-    // this.flames.control = this.avatar.control;
 
     this.avatar.move = function(t, dt) {
+      //forward movement
       this.aheadVector = new Vec3(Math.cos(this.orientation), Math.sin(this.orientation),0);
-      this.force = new Vec3(this.aheadVector).mul(this.thrust); // avatar does not move if the up or down key is not being held
+      this.force = (this.aheadVector).mul(this.thrust); // avatar does not move if the up or down key is not being held
       const acceleration = new Vec3(this.force).mul(this.invMass);
       const momentum = 0.0;
       const initial_velocity = momentum * this.invMass;
       this.velocity.addScaled(dt, initial_velocity);
       this.velocity.addScaled(dt, acceleration);
       this.position.addScaled(dt, this.velocity);
-      // this.velocity.mul(Math.exp(-dt * c * this.invMass));
+      this.velocity.mul(Math.exp(-dt * this.backDrag * this.invMass));
 
+      // const spinForce = this.torque *
       const angularAcceleration = this.torque * this.invAngularMass;
       this.angularVelocity += angularAcceleration * dt;
       this.orientation += this.angularVelocity * dt;
