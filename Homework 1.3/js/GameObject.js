@@ -1,14 +1,14 @@
-"use strict"; 
+"use strict";
 /* exported GameObject */
 class GameObject extends UniformProvider {
-  constructor(mesh) { 
+  constructor(mesh) {
     super("gameObject");
 
-    this.position = new Vec3(0, 0, 0); 
-    this.orientation = 0; 
-    this.scale = new Vec3(1, 1, 1); 
+    this.position = new Vec3(0, 0, 0);
+    this.orientation = 0;
+    this.scale = new Vec3(1, 1, 1);
 
-    this.parent = null; 
+    this.parent = null;
 
     this.move = function(){};
     this.control = function(){};
@@ -21,6 +21,8 @@ class GameObject extends UniformProvider {
     this.invAngularMass = 1;
     this.angularVelocity = 0;
     this.angularDrag = 1;
+
+    this.boundingRadius = this.scale;
 
     this.addComponentsAndGatherUniforms(mesh); // defines this.modelMatrix
   }

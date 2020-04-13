@@ -4,6 +4,7 @@ class Scene extends UniformProvider {
   constructor(gl) {
     super("scene");
     this.programs = [];
+    this.lastShoot = 0;
 
     this.vsTextured = new Shader(gl, gl.VERTEX_SHADER, "textured-vs.glsl");
     this.fsTextured = new Shader(gl, gl.FRAGMENT_SHADER, "textured-fs.glsl");
@@ -66,7 +67,21 @@ class Scene extends UniformProvider {
       this.velocity.addScaled(dt, acceleration);
       this.position.addScaled(dt, this.velocity);
     };
-
+    const asteroidControl = function(t, dt, keysPressed, colliders){
+      // console.log(colliders);
+      for(const collider of colliders){
+        // this.interact(t, dt, collider);
+      }
+    };
+    // const asteroidInteract = function(t, dt, otherObject){
+    //   if(otherObject === this){ continue;}
+    //   let diff = new Vec3(this.position.minus(otherObject.position));
+    //   let dist2 = diff.dot(diff);
+    //   let normal = diff.direction();
+    //   this.position.addScaled(normal);
+    //   otherObject.position.addScaled(normal);
+    //
+    // };
     for(let i=0; i < 64; i++){
       const asteroid = new GameObject( this.asteroidMesh );
       asteroid.position.setRandom(new Vec3(-12, -12, 0), new Vec3(12, 12, 0) );
@@ -74,6 +89,8 @@ class Scene extends UniformProvider {
       asteroid.angularVelocity = Math.random(-2, 2);
       this.gameObjects.push(asteroid);
       asteroid.move = genericMove;
+      // asteroid.interact = asteroidInteract;
+      asteroid.control = asteroidControl;
     }
 
     const remove = function(ary, elem) {
@@ -143,7 +160,29 @@ class Scene extends UniformProvider {
         gameObjects.push(flamesRight);
         gameObjects.push(flamesLeft);
       }
+      // console.log(this.boundingRadius);
+      for(const collider of colliders){
+        if(collider === this){continue;}
+        let distance = this.position.minus(collider.position);
+        let dist2 = distance.dot(distance);
+        // console.log(dist2);
+        if(distance < dist2){
+          console.log(distance);
+        }
+        // let
+        this.interact(t, dt, collider);
+      }
     };
+
+    this.avatar.interact = function(t, dt, other){
+
+    };
+
+    console.log(this.avatar.boundingRadius);
+    console.log(this.flames.boundingRadius);
+    console.log(this.flames.scale);
+
+
 
     this.avatar.move = function(t, dt) {
       //forward movement
@@ -195,24 +234,21 @@ class Scene extends UniformProvider {
     const theta = this.avatar.orientation;
 
     if(keysPressed.SPACE){
-      // this.plasma = new GameObject(this.plasmaMesh);
-      // this.gameObjects.push.(this.plasma);
-      this.plasma = new GameObject(this.plasmaMesh);
-      this.plasma.position.set(this.avatar.position);
-      this.plasma.scale.set(0.3,0.3,0.3);
-      console.log(this.plasma);
-      console.log(this.gameObjects);
-      this.plasma.move = function(t, dt){
-        this.aheadVector = new Vec3(Math.cos(theta), Math.sin(theta),0);
-        this.force = new Vec3(this.aheadVector).mul(20.0);
-        const acceleration = new Vec3(this.force).mul(this.invMass);
-        // const momentum = 0.0;
-        // const initial_velocity = momentum * this.invMass;
-        // this.velocity.addScaled(dt, initial_velocity);
-        this.velocity.addScaled(dt, acceleration);
-        this.position.addScaled(dt, this.velocity);
-      };
-      this.gameObjects.push(this.plasma);
+      keysPressed.SPACE = false;
+      if((t - this.lastShoot) > 1.0){
+        this.plasma = new GameObject(this.plasmaMesh);
+        this.plasma.position.set(this.avatar.position);
+        this.plasma.scale.set(0.3,0.3,0.3);
+        this.plasma.move = function(t, dt){
+          this.aheadVector = new Vec3(Math.cos(theta), Math.sin(theta),0);
+          this.force = new Vec3(this.aheadVector).mul(20.0);
+          const acceleration = new Vec3(this.force).mul(this.invMass);
+          this.velocity.addScaled(dt, acceleration);
+          this.position.addScaled(dt, this.velocity);
+        };
+        this.gameObjects.push(this.plasma);
+        this.lastShoot = t;
+      }
     }
 
     // clear the screen
