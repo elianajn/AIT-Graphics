@@ -28,7 +28,6 @@ class Scene extends UniformProvider {
     this.flamesMaterial.colorTexture.set(new Texture2D(gl, "media/afterburner.png"));
     this.flamesMesh = new Mesh(this.flamesMaterial, this.texturedQuadGeometry);
     this.flames = new GameObject(this.flamesMesh);
-    // this.flames.position.set(-14.3,-12.75);
     this.flames.position.set(-1.08,0.3);
     this.flames.orientation = Math.PI - 0.2;
     this.flames.scale = (0.7,0.7,0.7);
@@ -37,13 +36,11 @@ class Scene extends UniformProvider {
     this.flamesRight.position.set(-0.75,-0.75);
     this.flamesRight.orientation = 5*Math.PI/4 - 0.3;
     this.flamesRight.scale = (0.4,0.4,0.4);
-    // this.gameObjects.push(this.flamesRight);
 
     this.flamesLeft = new GameObject(this.flamesMesh);
     this.flamesLeft.position.set(-0.75,1.0);
     this.flamesLeft.orientation = 3*Math.PI/4 + 0.3;
     this.flamesLeft.scale = (0.4,0.4,0.4);
-    // this.gameObjects.push(this.flamesLeft);
 
     this.raiderMaterial = new Material(this.texturedProgram);
     this.raiderMaterial.colorTexture.set(new Texture2D(gl, "media/raider.png"));
@@ -68,28 +65,40 @@ class Scene extends UniformProvider {
       this.position.addScaled(dt, this.velocity);
     };
     const asteroidControl = function(t, dt, keysPressed, colliders){
-      // console.log(colliders);
       for(const collider of colliders){
-        // this.interact(t, dt, collider);
+        if(this === collider){continue;}
+        var a = collider.position.x - this.position.x;
+        var b = collider.position.y - this.position.y;
+        var difference = Math.sqrt( a*2 + b*2 );
+
+        let combinedRadii = collider.boundingRadius + this.boundingRadius;
+        if(difference < combinedRadii){
+          // console.log("collision!!");
+          this.interact(t, dt, collider);
+        }
+
+
       }
     };
-    // const asteroidInteract = function(t, dt, otherObject){
-    //   if(otherObject === this){ continue;}
-    //   let diff = new Vec3(this.position.minus(otherObject.position));
-    //   let dist2 = diff.dot(diff);
-    //   let normal = diff.direction();
-    //   this.position.addScaled(normal);
-    //   otherObject.position.addScaled(normal);
-    //
-    // };
-    for(let i=0; i < 64; i++){
+    const asteroidInteract = function(t, dt, collider){
+      var a = collider.position.x - this.position.x;
+      var b = collider.position.y - this.position.y;
+      var difference = Math.sqrt( a*2 + b*2 );
+      // console.log(difference);
+      let differenceVector = new Vec2(a,b);
+      // let normal = difference.direction();
+      // this.position.addScaled(normal);
+      // collider.position.addScaled(normal);
+
+    };
+    for(let i=0; i < 30; i++){
       const asteroid = new GameObject( this.asteroidMesh );
-      asteroid.position.setRandom(new Vec3(-12, -12, 0), new Vec3(12, 12, 0) );
+      asteroid.position.setRandom(new Vec3(-24, -24, 0), new Vec3(12, 12, 0) );
       asteroid.velocity.setRandom(new Vec3(-2, -2, 0), new Vec3(2, 2, 0));
       asteroid.angularVelocity = Math.random(-2, 2);
       this.gameObjects.push(asteroid);
       asteroid.move = genericMove;
-      // asteroid.interact = asteroidInteract;
+      asteroid.interact = asteroidInteract;
       asteroid.control = asteroidControl;
     }
 
@@ -100,39 +109,14 @@ class Scene extends UniformProvider {
     };
 
 
-    this.avatar.backDrag = 0.9;
+    this.avatar.backDrag = 0.1;
     this.avatar.sideDrag = 0.5;
-    this.avatar.angularDrag = 0.5;
-    // this.avatar.aheadVector = new Vec3();
+    this.avatar.angularDrag = 0.8;
     this.avatar.thrust = 0;
     var gameObjects = this.gameObjects;
     var flames = this.flames;
     var flamesRight = this.flamesRight;
     var flamesLeft = this.flamesLeft;
-    // this.avatar.control = function(t, dt, keysPressed, colliders){
-    //   this.thrust = 0;
-    //   this.torque = 0;
-    //   remove(gameObjects, flames);
-    //   remove(gameObjects, flamesRight);
-    //   remove(gameObjects, flamesLeft);
-    //   if(keysPressed.LEFT){
-    //     this.torque += 1;
-    //     gameObjects.push(flamesRight);
-    //   }
-    //   if(keysPressed.RIGHT){
-    //     this.torque -= 1;
-    //     gameObjects.push(flamesLeft);
-    //   }
-    //   if(keysPressed.UP){
-    //     this.thrust += 1;
-    //     gameObjects.push(flames);
-    //   }
-    //   if(keysPressed.DOWN){
-    //     this.thrust -= 1;
-    //     gameObjects.push(flamesRight);
-    //     gameObjects.push(flamesLeft);
-    //   }
-    // };
     this.avatar.invMass = 100.0;
     this.flames.parent = this.avatar;
     this.flamesRight.parent = this.avatar;
@@ -160,28 +144,23 @@ class Scene extends UniformProvider {
         gameObjects.push(flamesRight);
         gameObjects.push(flamesLeft);
       }
-      // console.log(this.boundingRadius);
       for(const collider of colliders){
-        if(collider === this){continue;}
-        let distance = this.position.minus(collider.position);
-        let dist2 = distance.dot(distance);
-        // console.log(dist2);
-        if(distance < dist2){
-          console.log(distance);
+        if(this === collider){continue;}
+        var a = collider.position.x - this.position.x;
+        var b = collider.position.y - this.position.y;
+        var difference = Math.sqrt( a*2 + b*2 );
+
+        let combinedRadii = collider.boundingRadius + this.boundingRadius;
+        if(difference < combinedRadii){
+          // console.log("collision!!");
+          this.interact(t, dt, collider);
         }
-        // let
-        this.interact(t, dt, collider);
       }
     };
 
     this.avatar.interact = function(t, dt, other){
 
     };
-
-    console.log(this.avatar.boundingRadius);
-    console.log(this.flames.boundingRadius);
-    console.log(this.flames.scale);
-
 
 
     this.avatar.move = function(t, dt) {
@@ -196,13 +175,11 @@ class Scene extends UniformProvider {
       this.position.addScaled(dt, this.velocity);
       this.velocity.mul(Math.exp(-dt * this.backDrag * this.invMass));
 
-      // const spinForce = this.torque *
       const angularAcceleration = this.torque * this.invAngularMass;
       this.angularVelocity += angularAcceleration * dt;
+      this.angularVelocity *= Math.exp(-dt * this.angularDrag * this.invAngularMass);
       this.orientation += this.angularVelocity * dt;
     };
-    // this.flames.control = this.avatar.control;
-
     this.timeAtFirstFrame = new Date().getTime();
     this.timeAtLastFrame = this.timeAtFirstFrame;
 

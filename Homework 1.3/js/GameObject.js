@@ -22,7 +22,7 @@ class GameObject extends UniformProvider {
     this.angularVelocity = 0;
     this.angularDrag = 1;
 
-    this.boundingRadius = this.scale;
+    this.boundingRadius = 0.5;
 
     this.addComponentsAndGatherUniforms(mesh); // defines this.modelMatrix
   }
