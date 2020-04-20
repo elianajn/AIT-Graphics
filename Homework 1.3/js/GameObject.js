@@ -21,6 +21,7 @@ class GameObject extends UniformProvider {
     this.invAngularMass = 1;
     this.angularVelocity = 0;
     this.angularDrag = 1;
+    this.momentum = 1;
 
     this.boundingRadius = 0.5;
 

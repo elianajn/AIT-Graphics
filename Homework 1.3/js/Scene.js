@@ -69,7 +69,7 @@ class Scene extends UniformProvider {
         if(this === collider){continue;}
         var a = collider.position.x - this.position.x;
         var b = collider.position.y - this.position.y;
-        var difference = Math.sqrt( a*2 + b*2 );
+        var difference = Math.sqrt( a*a + b*b );
 
         let combinedRadii = collider.boundingRadius + this.boundingRadius;
         if(difference < combinedRadii){
@@ -83,13 +83,17 @@ class Scene extends UniformProvider {
     const asteroidInteract = function(t, dt, collider){
       var a = collider.position.x - this.position.x;
       var b = collider.position.y - this.position.y;
-      var difference = Math.sqrt( a*2 + b*2 );
+      var difference = Math.sqrt( a*a + b*a );
       // console.log(difference);
-      let differenceVector = new Vec2(a,b);
+      let normal = new Vec2(a,b);
       // let normal = difference.direction();
-      // this.position.addScaled(normal);
-      // collider.position.addScaled(normal);
-
+      // let normal =
+      this.position.addScaled(-0.5,normal);
+      collider.position.addScaled(0.5,normal);
+      let relativeVelocity = this.velocity.minus(collider.velocity);
+      let impMag = normal.dot(relativeVelocity) / (1/this.momentum + 1/collider.momentum) * (2);
+      this.velocity.addScaled(-impMag, normal);
+      collider.velocity.addScaled(-impMag, normal);
     };
     for(let i=0; i < 30; i++){
       const asteroid = new GameObject( this.asteroidMesh );
@@ -148,7 +152,7 @@ class Scene extends UniformProvider {
         if(this === collider){continue;}
         var a = collider.position.x - this.position.x;
         var b = collider.position.y - this.position.y;
-        var difference = Math.sqrt( a*2 + b*2 );
+        var difference = Math.sqrt( a*a + b*b );
 
         let combinedRadii = collider.boundingRadius + this.boundingRadius;
         if(difference < combinedRadii){
