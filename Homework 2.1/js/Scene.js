@@ -11,10 +11,13 @@ class Scene extends UniformProvider {
     this.fsProcedural = new Shader(gl, gl.FRAGMENT_SHADER, "procedural-fs.glsl");
     this.vsBackground = new Shader(gl, gl.VERTEX_SHADER, "background-vs.glsl");
     this.fsBackground = new Shader(gl, gl.FRAGMENT_SHADER, "background-fs.glsl");
+    this.fsGround     = new Shader(gl, gl.FRAGMENT_SHADER, "ground-fs.glsl");
     this.programs.push(this.texturedProgram = new TexturedProgram(gl, this.vsTextured, this.fsTextured));
     this.programs.push(this.proceduralProgram = new TexturedProgram(gl, this.vsTextured, this.fsProcedural));
     this.programs.push(this.backgroundProgram = new TexturedProgram(gl, this.vsBackground, this.fsBackground));
+    this.programs.push(this.groundProgram = new TexturedProgram(gl, this.vsTextured, this.fsGround));
     this.texturedQuadGeometry = new TexturedQuadGeometry(gl);
+    this.groundGeometry = new PlaneGeometry(gl);
 
     // TIME
     this.timeAtFirstFrame = new Date().getTime();
@@ -50,21 +53,28 @@ class Scene extends UniformProvider {
     this.ballMaterial = new Material(this.texturedProgram);
     this.ballMaterial.colorTexture.set(new Texture2D(gl, "media/ball.png"));
 
+    this.groundMaterial = new Material(this.groundProgram);
+    this.groundMaterial.colorTexture.set(new Texture2D(gl, "media/lava.png"));
+
     // MESHES
     this.mesh = new MultiMesh(gl, "media/slowpoke/Slowpoke.json",[this.slowpokeMaterial, this.eyeMaterial]);
     this.proceduralMesh = new Mesh(this.proceduralMaterial, this.texturedQuadGeometry);
     this.marbleBallMesh = new MultiMesh(gl, "media/sphere.json", [this.proceduralMaterial]);
     this.ballMesh = new MultiMesh(gl, "media/sphere.json", [this.ballMaterial]);
     this.backgroundMesh = new Mesh(this.backgroundMaterial, this.texturedQuadGeometry);
+    this.groundMesh = new Mesh(this.groundMaterial, this.groundGeometry);
 
     // GAME OBJECTS
     this.gameObjects = [];
     this.background = new GameObject(this.backgroundMesh);
     this.avatar =  new GameObject(this.mesh);
+    this.ground = new GameObject(this.groundMesh);
     this.avatar.position.set(0, 1, 0);
     this.avatar.scale.set(0.3, 0.3, 0.3);
+    this.ground.update = function(){};
     this.gameObjects.push(this.background);
     this.gameObjects.push(this.avatar);
+    this.gameObjects.push(this.ground);
 
     const genericMove = function(t, dt){
       const ahead = new Vec3( Math.sin(this.yaw), 0, Math.cos(this.yaw));
