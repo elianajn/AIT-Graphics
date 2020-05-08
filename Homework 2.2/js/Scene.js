@@ -14,12 +14,15 @@ class Scene extends UniformProvider {
     this.fsGround     = new Shader(gl, gl.FRAGMENT_SHADER, "ground-fs.glsl");
     this.vsMapping    = new Shader(gl, gl.VERTEX_SHADER, "mapping-vs.glsl");
     this.fsMapping    = new Shader(gl, gl.FRAGMENT_SHADER, "mapping-fs.glsl");
+    // this.vsLight      = new Shader(gl, gl.VERTEX_SHADER, "light-vs.glsl");
     this.fsLight      = new Shader(gl, gl.FRAGMENT_SHADER, "light-fs.glsl");
+    this.fsProceduralMapping = new Shader(gl, gl.FRAGMENT_SHADER, "proceduralMapping-fs.glsl");
     this.programs.push(this.texturedProgram = new TexturedProgram(gl, this.vsTextured, this.fsTextured));
     this.programs.push(this.proceduralProgram = new TexturedProgram(gl, this.vsTextured, this.fsProcedural));
     this.programs.push(this.backgroundProgram = new TexturedProgram(gl, this.vsBackground, this.fsBackground));
     this.programs.push(this.groundProgram = new TexturedProgram(gl, this.vsTextured, this.fsGround));
     this.programs.push(this.mappingProgram = new TexturedProgram(gl, this.vsMapping, this.fsMapping));
+    this.programs.push(this.proceduralMappingProgram = new TexturedProgram(gl, this.vsMapping, this.fsProceduralMapping));
     // this.programs.push(this.lightProgram = new TexturedProgram(gl, this.vsMapping, this.fsLight));
     this.texturedQuadGeometry = new TexturedQuadGeometry(gl);
     this.groundGeometry = new PlaneGeometry(gl);
@@ -64,6 +67,9 @@ class Scene extends UniformProvider {
     this.mappingMaterial = new Material(this.mappingProgram);
     this.mappingMaterial.envmapTexture.set(this.envTexture);
 
+    this.proceduralMappingMaterial = new Material(this.proceduralMappingProgram);
+    this.proceduralMappingMaterial.envmapTexture.set(this.envTexture);
+
     // MESHES
     this.mesh = new MultiMesh(gl, "media/slowpoke/Slowpoke.json",[this.slowpokeMaterial, this.eyeMaterial]);
     this.proceduralMesh = new Mesh(this.proceduralMaterial, this.texturedQuadGeometry);
@@ -72,6 +78,7 @@ class Scene extends UniformProvider {
     this.backgroundMesh = new Mesh(this.backgroundMaterial, this.texturedQuadGeometry);
     this.groundMesh = new Mesh(this.groundMaterial, this.groundGeometry);
     this.orbMesh = new MultiMesh(gl, "media/sphere.json", [this.mappingMaterial]);
+    this.distortedOrbMesh = new MultiMesh(gl, "media/sphere.json", [this.proceduralMappingMaterial]);
 
     // GAME OBJECTS
     this.gameObjects = [];
@@ -88,6 +95,9 @@ class Scene extends UniformProvider {
     this.orb.position.set(5, 5, 5);
     this.orb.modelMatrixInverse.set(this.modelMatrix).invert();
     this.gameObjects.push(this.orb);
+    this.distortedOrb = new GameObject(this.distortedOrbMesh);
+    this.distortedOrb.position.set(-5, 5, 5);
+    this.gameObjects.push(this.distortedOrb);
 
     // LIGHTS
     this.lights = [];
