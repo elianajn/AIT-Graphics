@@ -65,8 +65,8 @@ class Scene extends UniformProvider {
     this.ballMaterial = new Material(this.texturedSpecularProgram);
     this.ballMaterial.colorTexture.set(new Texture2D(gl, "media/ball.png"));
     this.ballMaterial.specularColor.set(new Vec3(1.0,1.0,1.0));
-    this.ballMaterial.shininess = 10.0;
-    
+    this.ballMaterial.shininess = 5.0;
+
     this.groundMaterial = new Material(this.groundProgram);
     this.groundMaterial.colorTexture.set(new Texture2D(gl, "media/lava.png"));
 
@@ -109,12 +109,15 @@ class Scene extends UniformProvider {
     this.lights = [];
     this.lights.push(new Light(this.lights.length, ...this.programs));
     this.lights.push(new Light(this.lights.length, ...this.programs));
-    this.lights[0].position.set(1, 1, 5, 0).normalize();
-    this.lights[0].powerDensity.set(1, 0, 1);
+    // this.lights.push(new Light(this.lights.length, ...this.programs));
+    this.lights[0].position.set(5, 5, 10, 0).normalize();
+    this.lights[0].powerDensity.set(0, 0, 1);
     // this.lights[0].
-    this.lights[1].position.set(-1,-1,-1,1).normalize();
+    this.lights[1].position.set(-5,0,10,1).normalize();
     // this.lights[1].powerDensity.set(1, 0, 1);
     this.lights[1].powerDensity.set(1,1,0);
+    // this.lights[2].position.set(-5,5,10,0).normalize();
+    // this.lights[2].powerDensity.set(0,1,1);
 
 
     const genericMove = function(t, dt){

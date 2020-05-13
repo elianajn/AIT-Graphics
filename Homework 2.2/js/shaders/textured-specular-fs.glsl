@@ -47,7 +47,7 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
 
   void main(void) {
      vec3 color = vec3(0, 0, 0);
-     for (int i = 0; i < 2; i++){
+     for (int i = 0; i < 3; i++){
       vec3 lightDiff = lights[i].position.xyz;
       vec3 lightDir = normalize(lightDiff);
       float distanceSquared = dot(lightDiff, lightDiff);
@@ -62,8 +62,8 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
       vec3 normal = normalize(worldNormal.xyz);
       //fragmentColor.rgb += shade(normal, lightDir,powerDensity,texture(material.colorTexture, tex.xy/tex.w).rgb);
       //color += shade(normal, lightDir,powerDensity,texture(material.colorTexture, tex.xy/tex.w).rgb);
-      color += shade(normal, lightDir, viewDir, powerDensity, texture(material.colorTexture, tex.xy/tex.w).rgb, material.specularColor, material.shininess);
+      fragmentColor.rgb += shade(normal, lightDir, viewDir, powerDensity, texture(material.colorTexture, tex.xy/tex.w).rgb, material.specularColor, material.shininess);
     }
-    fragmentColor = vec4(color, 1.0);
+    //fragmentColor = vec4(color, 1.0);
   }
 `;
