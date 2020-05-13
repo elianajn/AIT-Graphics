@@ -9,7 +9,6 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
   in vec4 worldPosition;
 
   uniform struct{
-  	//vec4 solidColor;
   	sampler2D colorTexture;
     vec3 specularColor;
     float shininess;
@@ -34,17 +33,6 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
     return powerDensity * materialColor * cosa;
     }
 
-  vec3 shade(vec3 normal, vec3 lightDir, vec3 viewDir,
-               vec3 powerDensity, vec3 materialColor,
-               vec3 specularColor, float shininess)      {
-
-     float cosa = clamp( dot(lightDir, normal), 0.0, 1.0);
-     vec3 halfway = normalize(viewDir + lightDir);
-     float cosDelta = clamp(dot(halfway, normal), 0.0, 1.0);
-     return powerDensity * materialColor * cosa + powerDensity * specularColor * pow(cosDelta, shininess);
-     }
-
-
   void main(void) {
      vec3 color = vec3(0, 0, 0);
      for (int i = 0; i < 2; i++){
@@ -59,9 +47,7 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
       }
 
       vec3 normal = normalize(worldNormal.xyz);
-      //fragmentColor.rgb += shade(normal, lightDir,powerDensity,texture(material.colorTexture, tex.xy/tex.w).rgb);
       color += shade(normal, lightDir,powerDensity,texture(material.colorTexture, tex.xy/tex.w).rgb);
-      //color += shade(normal, lightDir, viewDir, powerDensity, texture(material.colorTexture, tex.xy/tex.w).rgb, material.specularColor, material.shininess);
     }
     fragmentColor = vec4(color, 1.0);
   }
