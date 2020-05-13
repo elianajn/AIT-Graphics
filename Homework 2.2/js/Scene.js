@@ -15,15 +15,19 @@ class Scene extends UniformProvider {
     this.vsMapping    = new Shader(gl, gl.VERTEX_SHADER, "mapping-vs.glsl");
     this.fsMapping    = new Shader(gl, gl.FRAGMENT_SHADER, "mapping-fs.glsl");
     // this.vsLight      = new Shader(gl, gl.VERTEX_SHADER, "light-vs.glsl");
-    this.fsLight      = new Shader(gl, gl.FRAGMENT_SHADER, "light-fs.glsl");
+    // this.fsLight      = new Shader(gl, gl.FRAGMENT_SHADER, "light-fs.glsl");
     this.fsProceduralMapping = new Shader(gl, gl.FRAGMENT_SHADER, "proceduralMapping-fs.glsl");
+    this.fsDiffuse = new Shader(gl, gl.FRAGMENT_SHADER, "textured-diffuse-fs.glsl");
+    this.fsSpecular = new Shader(gl, gl.FRAGMENT_SHADER, "textured-specular-fs.glsl");
     this.programs.push(this.texturedProgram = new TexturedProgram(gl, this.vsTextured, this.fsTextured));
+    this.programs.push(this.texturedDiffuseProgram = new TexturedProgram(gl, this.vsTextured, this.fsDiffuse));
+    this.programs.push(this.texturedSpecularProgram = new TexturedProgram(gl, this.vsTextured, this.fsSpecular));
     this.programs.push(this.proceduralProgram = new TexturedProgram(gl, this.vsTextured, this.fsProcedural));
     this.programs.push(this.backgroundProgram = new TexturedProgram(gl, this.vsBackground, this.fsBackground));
     this.programs.push(this.groundProgram = new TexturedProgram(gl, this.vsTextured, this.fsGround));
     this.programs.push(this.mappingProgram = new TexturedProgram(gl, this.vsMapping, this.fsMapping));
     this.programs.push(this.proceduralMappingProgram = new TexturedProgram(gl, this.vsMapping, this.fsProceduralMapping));
-    // this.programs.push(this.lightProgram = new TexturedProgram(gl, this.vsMapping, this.fsLight));
+    // this.programs.push(this.lightProgram = new TexturedProgram(gl, this.vsLight, this.fsLight));
     this.texturedQuadGeometry = new TexturedQuadGeometry(gl);
     this.groundGeometry = new PlaneGeometry(gl);
 
@@ -32,12 +36,12 @@ class Scene extends UniformProvider {
     this.timeAtLastFrame = this.timeAtFirstFrame;
 
     // MATERIALS
-    this.material = new Material(this.texturedProgram);
-    this.material.colorTexture.set(new Texture2D(gl, "media/usa.jpg"));
+    // this.material = new Material(this.texturedProgram);
+    // this.material.colorTexture.set(new Texture2D(gl, "media/usa.jpg"));
 
-    this.slowpokeMaterial = new Material(this.texturedProgram);
+    this.slowpokeMaterial = new Material(this.texturedDiffuseProgram);
     this.slowpokeMaterial.colorTexture.set(new Texture2D(gl, "media/slowpoke/YadonDh.png"));
-    this.eyeMaterial = new Material(this.texturedProgram);
+    this.eyeMaterial = new Material(this.texturedDiffuseProgram);
     this.eyeMaterial.colorTexture.set(new Texture2D(gl, "media/slowpoke/YadonEyeDh.png"));
 
     this.proceduralMaterial = new Material(this.proceduralProgram);
@@ -58,9 +62,11 @@ class Scene extends UniformProvider {
       );
     this.backgroundMaterial.envTexture.set(this.envTexture);
 
-    this.ballMaterial = new Material(this.texturedProgram);
+    this.ballMaterial = new Material(this.texturedSpecularProgram);
     this.ballMaterial.colorTexture.set(new Texture2D(gl, "media/ball.png"));
-
+    this.ballMaterial.specularColor.set(new Vec3(1.0,1.0,1.0));
+    this.ballMaterial.shininess = 10.0;
+    
     this.groundMaterial = new Material(this.groundProgram);
     this.groundMaterial.colorTexture.set(new Texture2D(gl, "media/lava.png"));
 
@@ -90,7 +96,7 @@ class Scene extends UniformProvider {
     this.ground.update = function(){};
     this.gameObjects.push(this.background);
     this.gameObjects.push(this.avatar);
-    this.gameObjects.push(this.ground);
+    // this.gameObjects.push(this.ground);
     this.orb = new GameObject(this.orbMesh);
     this.orb.position.set(5, 5, 5);
     this.orb.modelMatrixInverse.set(this.modelMatrix).invert();
@@ -102,8 +108,13 @@ class Scene extends UniformProvider {
     // LIGHTS
     this.lights = [];
     this.lights.push(new Light(this.lights.length, ...this.programs));
-    this.lights[0].position.set(1, 1, 1, 0).normalize();
-    this.lights[0].powerDensity.set(1, 1, 0);
+    this.lights.push(new Light(this.lights.length, ...this.programs));
+    this.lights[0].position.set(1, 1, 5, 0).normalize();
+    this.lights[0].powerDensity.set(1, 0, 1);
+    // this.lights[0].
+    this.lights[1].position.set(-1,-1,-1,1).normalize();
+    // this.lights[1].powerDensity.set(1, 0, 1);
+    this.lights[1].powerDensity.set(1,1,0);
 
 
     const genericMove = function(t, dt){
@@ -292,8 +303,8 @@ class Scene extends UniformProvider {
         gameObject.update();
     }
     for(const gameObject of this.gameObjects) {
-        gameObject.draw(this, this.camera);
-        // gameObject.draw(this, this.camera, ...this.lights);
+        // gameObject.draw(this, this.camera);
+        gameObject.draw(this, this.camera, ...this.lights);
     }
     this.camera.avatarPosition.set(this.avatar.position);
 

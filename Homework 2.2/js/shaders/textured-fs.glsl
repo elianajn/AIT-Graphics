@@ -1,9 +1,12 @@
-Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 300 es 
+Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 300 es
   precision highp float;
 
   out vec4 fragmentColor;
+
   in vec4 color;
   in vec4 tex;
+  in vec4 worldNormal;
+  in vec4 worldPosition;
 
   uniform struct{
   	vec4 solidColor;

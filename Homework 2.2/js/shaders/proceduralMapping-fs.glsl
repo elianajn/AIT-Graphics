@@ -37,6 +37,7 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
   }
 
 
+
   void main(void) {
      vec3 perturbedNormal = normalize(worldNormal.xyz + noiseGrad(worldPosition.xyz*10.0));
      vec3 viewDirection = normalize(camera.position - worldPosition.xyz);
