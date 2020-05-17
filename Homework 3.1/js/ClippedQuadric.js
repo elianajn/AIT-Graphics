@@ -56,10 +56,6 @@ class ClippedQuadric extends UniformProvider {
                        0,  0,  0,  -1);
     }
     transform(M){
-      // let invM = new Mat4(M).invert();
-      // let transposedM = new Mat4(M).transpose();
-      // this.surface = this.surface.premul(invM).mul(transposedM);
-      // this.clipper = this.clipper.premul(invM).mul(transposedM);
       M.invert();
         this.surface.premul(M);
         this.clipper.premul(M);

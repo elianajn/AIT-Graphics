@@ -107,6 +107,23 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
            * specularColor * pow(cosDelta, shininess) * cosa / max(cosb, cosa);
   }
 
+  vec3 noiseGrad(vec3 r) {
+    uvec3 s = uvec3(
+      0x1D4E1D4E,
+      0x58F958F9,
+      0x129F129F);
+    vec3 f = vec3(0, 0, 0);
+    for(int i=0; i<16; i++) {
+      vec3 sf =
+      vec3(s & uvec3(0xFFFF))
+    / 65536.0 - vec3(0.5, 0.5, 0.5);
+
+      f += cos(dot(sf, r)) * sf;
+      s = s >> 1;
+    }
+    return f;
+  }
+
   void main(void){
 	  vec4 e = vec4(camera.position, 1);		 //< ray origin
   	vec4 d = vec4(normalize(rayDir).xyz, 0); //< ray direction
@@ -147,6 +164,15 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
           else if(index == 2 || index == 3){ //pawn, made of plastic
             vec3 viewDir = -d.xyz;
             fragmentColor.rgb += shadeSpecular(normal, lightDir, viewDir, powerDensity, material.materialColor, material.specularColor, material.shininess);
+          }
+          else if(index == 4 || index == 5){ //pawn, made of plastic, with noise
+            vec3 viewDir = -d.xyz;
+            mat4 matrix = clippedQuadrics[index].surface;
+            float x  = matrix[3][0];
+            float y  = matrix[3][1];
+            float z  = matrix[3][2];
+            vec3 noisyNormal = normalize(normal.xyz + noiseGrad(vec3(x,y,z)*5.0));
+            fragmentColor.rgb += shadeSpecular(noisyNormal, lightDir, viewDir, powerDensity, material.materialColor, material.specularColor, material.shininess);
           }
         }
       }

@@ -45,27 +45,13 @@ class Scene extends UniformProvider {
     this.traceMaterial.noiseFreq = 25;
     this.traceMaterial.noiseExp = 3;
     this.traceMaterial.noiseAmp = 20;
-    this.traceMaterial.lightWoodColor = new Vec3(0.996, 0.89, 0.733);//rgb(99.6%,89%,73.3%)
-    this.traceMaterial.darkWoodColor = new Vec3(0.714, 0.455, 0.184);//rgb(182,116,47);rgb(71.4%,45.5%,18.4%)//new Vec3(2.54,2.27,1.87);
-    // this.traceMaterial.darkWoodColor = new Vec3(1.0,0.0,1.0);
-    // rgb(182,116,47)
-    // this.traceMaterial.colorTexture.set(new Texture2D(gl, "media/posy512.png"));
-    // this.traceMaterial.colorTexture.set(new Texture2D(gl, "media/pattern.jpg"));
+    this.traceMaterial.lightWoodColor = new Vec3(0.996, 0.89, 0.733);
+    this.traceMaterial.darkWoodColor = new Vec3(0.714, 0.455, 0.184);
     this.traceMaterial.materialColor = new Vec3(1.0, 0.0, 0.0);
     this.traceMesh = new Mesh(this.traceMaterial, this.texturedQuadGeometry);
 
     this.traceQuad = new GameObject(this.traceMesh);
     this.gameObjects.push(this.traceQuad);
-
-    // this.slowpokeMaterial = new Material(this.texturedProgram);
-    // this.slowpokeMaterial.colorTexture.set(new Texture2D(gl, "media/slowpoke/YadonDh.png"));
-    // this.eyeMaterial = new Material(this.texturedProgram);
-    // this.eyeMaterial.colorTexture.set(new Texture2D(gl, "media/slowpoke/YadonEyeDh.png"));
-    // this.mesh = new MultiMesh(gl, "media/slowpoke/Slowpoke.json",
-    //     [this.slowpokeMaterial, this.eyeMaterial]);
-
-    // this.avatar =  new GameObject(this.mesh);
-    //this.gameObjects.push(this.avatar);
 
 
     this.clippedQuadrics = [];
@@ -73,17 +59,22 @@ class Scene extends UniformProvider {
     this.clippedQuadrics.push(new ClippedQuadric(this.clippedQuadrics.length, ...this.programs));
     this.clippedQuadrics.push(new ClippedQuadric(this.clippedQuadrics.length, ...this.programs));
     this.clippedQuadrics.push(new ClippedQuadric(this.clippedQuadrics.length, ...this.programs));
+    this.clippedQuadrics.push(new ClippedQuadric(this.clippedQuadrics.length, ...this.programs));
+    this.clippedQuadrics.push(new ClippedQuadric(this.clippedQuadrics.length, ...this.programs));
+
     this.clippedQuadrics[0].makeUnitCylinder();
     this.clippedQuadrics[1].makeCrown();
-    // this.clippedQuadrics[0].makeUnitSphere();
-    // this.clippedQuadrics[1].makePawn();
     this.clippedQuadrics[2].makeCone();
     this.clippedQuadrics[3].makeUnitSphere();
-    // this.clippedQuadrics[0].makeUnitCone();
+    this.clippedQuadrics[4].makeCone();
+    this.clippedQuadrics[5].makeUnitSphere();
+
     this.clippedQuadrics[0].transform(new Mat4().set().scale(0.7, 1.5, 0.7).translate(new Vec3(1.5, 1.8, 1.0)));
     this.clippedQuadrics[1].transform(new Mat4().set().scale(0.7, 1.0, 0.7).translate(new Vec3(1.5, 3.0, 1.0)));
     this.clippedQuadrics[2].transform(new Mat4().set().scale(0.5, 0.5, 0.5));
     this.clippedQuadrics[3].transform(new Mat4().set().scale(0.5, 0.5, 0.5));
+    this.clippedQuadrics[4].transform(new Mat4().set().scale(0.5, 0.5, 0.5).translate(new Vec3(-3.0, 0.0, -3.0)));
+    this.clippedQuadrics[5].transform(new Mat4().set().scale(0.5, 0.5, 0.5).translate(new Vec3(-3.0, 0.0, -3.0)));
 
     this.lights = [];
     this.lights.push(new Light(this.lights.length, ...this.programs));
