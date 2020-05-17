@@ -167,11 +167,7 @@ Shader.source[document.currentScript.src.split('js/shaders/')[1]] = `#version 30
           }
           else if(index == 4 || index == 5){ //pawn, made of plastic, with noise
             vec3 viewDir = -d.xyz;
-            mat4 matrix = clippedQuadrics[index].surface;
-            float x  = matrix[3][0];
-            float y  = matrix[3][1];
-            float z  = matrix[3][2];
-            vec3 noisyNormal = normalize(normal.xyz + noiseGrad(vec3(x,y,z)*5.0));
+            vec3 noisyNormal = normalize(normal.xyz + noiseGrad(hit.xyz*5.0));
             fragmentColor.rgb += shadeSpecular(noisyNormal, lightDir, viewDir, powerDensity, material.materialColor, material.specularColor, material.shininess);
           }
         }
